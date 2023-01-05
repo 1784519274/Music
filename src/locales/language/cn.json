@@ -1,0 +1,14 @@
+{
+  "menu": {
+    "home": "首页",
+    "songlist": "歌单",
+    "discover": "发现音乐",
+    "library": "音乐库"
+  },
+  "home": {
+    "recommend": "推荐歌单"
+  },
+  "slist": {
+    "allList": "全部歌单"
+  }
+}

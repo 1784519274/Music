@@ -1,0 +1,14 @@
+{
+  "menu": {
+    "home": "Home",
+    "songlist": "SongList",
+    "discover": "Discover Music",
+    "library": "Music Library"
+  },
+  "home": {
+    "recommend": "RecommendSong"
+  },
+  "slist": {
+    "allList": "SongList"
+  }
+}
