@@ -1,14 +1,14 @@
 {
   "menu": {
     "home": "Home",
-    "songlist": "SongList",
+    "songlist": "Song List",
     "discover": "Discover Music",
     "library": "Music Library"
   },
   "home": {
-    "recommend": "RecommendSong"
+    "recommend": "Recommend Song"
   },
   "slist": {
-    "allList": "SongList"
+    "allList": "Song List"
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <Transition name="playlist">
-    <div id="PlayList" v-if="openPlay" class="pt-4 z-30 PlayList" ref="target">
+    <div id="PlayList" v-if="openPlay" class="pt-4 PlayList" ref="target">
       <div style="height: 80px; padding-left: 30px;padding-right:20px" class="PlayList">
         <h1 style="font-size: 28px">当前播放</h1>
         <div class="flex justify-between">
@@ -74,7 +74,6 @@ playStore.$subscribe(async (mutation, state) => {
   if (state.openPlayList) {
     const res = await getSongDetail(state.ids)
     songList.value = res.songs
-    console.log(res.songs)
   }
 })
 </script>
@@ -85,7 +84,7 @@ playStore.$subscribe(async (mutation, state) => {
   height: calc(100vh - 80px);
   background: var(--background-secondary);
   position: fixed;
-  z-index: 20;
+  z-index: 60;
   top: 0;
   right: 0;
   color: var(--text-normal);

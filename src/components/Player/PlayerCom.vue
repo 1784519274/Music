@@ -1,6 +1,6 @@
 <template>
   <Transition name="player">
-    <div id="Player" v-if="JSON.stringify(songInfo) !== '{}'">
+    <div id="Player" v-if="JSON.stringify(songInfo) !== '{}'" class="z-50">
       <audio
         :src="url"
         @play="play"
@@ -13,37 +13,89 @@
         preload="auto"
         :volume="volume"
       ></audio>
-      <div class="h-full flex justify-between">
-        <div class="h-full flex" style="flex: 3; overflow: hidden">
-          <img v-if="isLoading" src="@/assets/logotheme.png" alt style="height: 60px; width: 60px" class="rounded-xl mr-4 cursor-pointer">
-          <img
-            v-else
-            style="height: 60px; width: 60px"
-            :src="avatarUrl"
-            alt
-            class="rounded-xl mr-4 cursor-pointer"
-          />
-          <div
-            class="flex flex-col justify-between box-border"
-            style="overflow: hidden"
-          >
-            <span
-              class="text-2xl"
-              style="
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-              "
-              >{{ songInfo.name }}</span
+      <div
+        class="h-full overflow-hidden flex justify-between"
+        style="z-index: 100"
+      >
+        <!-- 左 -->
+        <div
+          id="Show"
+          class="flex flex-col overflow-hidden"
+          :style="`flex: 3;transform: translateY(${open ? '0' : '-60'}px);`"
+        >
+          <!-- 展示歌词 -->
+          <div style="min-height: 60px" class="h-full flex overflow-hidden">
+            <div
+              class="flex justify-center items-center cursor-pointer mr-10"
+              style="width: 60px; height: 60px"
+              @click="handleWords"
             >
-            <div class="text-1xl">
-              <span v-for="item in songInfo.ar" :key="item.id">
-                {{ item.name }}
-              </span>
+              <Down></Down>
+            </div>
+            <div style="height: 60px" class="flex items-center">
+              <div
+                style="width: 50px; height: 50px"
+                class="item flex justify-center items-center border-2 rounded-full"
+              >
+                <Like></Like>
+              </div>
+            </div>
+          </div>
+          <!-- 未展示歌词 -->
+          <div class="h-full flex overflow-hidden">
+            <div
+              class="relative overflow-hidden mr-4 rounded-xl"
+              @mouseover="isHoverWords = true"
+              @mouseleave="isHoverWords = false"
+              style="min-width: 60px; width: 60px; min-height: 60px"
+            >
+              <img
+                v-if="!songInfo.al.picUrl"
+                src="@/assets/logotheme.png"
+                alt
+                style="height: 60px; min-width: 60px; width: 60px"
+                class="rounded-xl"
+              />
+              <img
+                v-else
+                style="height: 60px; min-width: 60px; width: 60px"
+                :src="songInfo.al.picUrl"
+                alt
+                class="rounded-xl"
+              />
+              <Transition name="words">
+                <div
+                  v-if="isHoverWords"
+                  id="Words"
+                  class="absolute top-0 left-0 bg-gray-200 bg-opacity-50 rounded-xl flex justify-center items-center cursor-pointer"
+                  style="height: 60px; width: 60px"
+                  @click="handleWords"
+                >
+                  <Up></Up>
+                </div>
+              </Transition>
+            </div>
+            <div class="flex flex-col justify-between" style="overflow: hidden">
+              <span
+                class="text-2xl"
+                style="
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                "
+                >{{ songInfo.name }}</span
+              >
+              <div class="text-1xl">
+                <span v-for="item in songInfo.ar" :key="item.id">
+                  {{ item.name }}
+                </span>
+              </div>
             </div>
           </div>
         </div>
+        <!-- 中 -->
         <div style="flex: 4" class="flex flex-col items-center">
+          <!-- 控制 -->
           <div id="Control" class="flex cursor-pointer w-full" style="flex: 2">
             <div class="flex justify-center" @click="handlePlayType">
               <Loop v-show="playType === 0"></Loop>
@@ -66,6 +118,7 @@
             </div>
             <div class="flex"></div>
           </div>
+          <!-- 进度条 -->
           <div id="Progress" style="flex: 1" class="flex">
             <span style="width: 60px; text-align: center">{{
               formatMusicPlay(currentTime)
@@ -94,6 +147,7 @@
             }}</span>
           </div>
         </div>
+        <!-- 右 -->
         <div
           style="flex: 3"
           class="flex flex-row-reverse items-center cursor-pointer"
@@ -113,8 +167,8 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
-import { useImage } from '@vueuse/core'
 import usePlayerStore from '@/store/player'
+import { useWordsStore } from '@/store'
 import { formatMusicPlay } from '@/util'
 import PauseSvg from '@/components/Svg/PauseSvg.jsx'
 import Play from '@/components/Svg/PlaySvg.jsx'
@@ -124,8 +178,12 @@ import LoopOnce from '@/components/Svg/LoopOnceSvg.jsx'
 import Random from '@/components/Svg/RandomSvg.jsx'
 import GoStart from '@/components/Svg/GoStart.jsx'
 import GoEnd from '@/components/Svg/GoEnd.jsx'
+import Up from '@/components/Svg/UpSvg.jsx'
+import Down from '@/components/Svg/DownSvg.jsx'
+import Like from '@/components/Svg/LikeSvg.jsx'
 
 const playerStore = usePlayerStore()
+const wordsStore = useWordsStore()
 // 歌曲url
 const url = ref('')
 // 歌曲信息
@@ -144,6 +202,8 @@ const muted = ref(false)
 const loop = ref(false)
 // 音量大小
 const volume = ref(1)
+
+const wordsTimer = ref(null)
 // 开始播放
 const play = () => {
   isPlay.value = true
@@ -153,15 +213,19 @@ const play = () => {
 const pause = () => {
   isPlay.value = false
   playerStore.changeIsPlay(false)
+  clearInterval(wordsTimer.value)
   if (percentage.value === 100) {
     if (playType.value === 0) {
+      console.log(0)
       playerStore.nextSong()
     }
     if (playType.value === 1) {
       percentage.value = 0
+      console.log(1)
       handlePlay()
     }
     if (playType.value === 2) {
+      console.log(2)
       playerStore.randomSong()
     }
   }
@@ -169,6 +233,7 @@ const pause = () => {
 // 当前播放时间
 const timeupdate = (audio) => {
   currentTime.value = audio.target.currentTime
+  playerStore.changeCurrentPlayTime(audio.target.currentTime)
   if (!isDrag.value) {
     percentage.value = (audio.target.currentTime / allTime.value) * 100
   }
@@ -183,9 +248,6 @@ const getDuration = (audio) => {
 playerStore.$subscribe((mutation, state) => {
   url.value = state.songUrl ?? url.value
   songInfo.value = state.songInfo ?? songInfo.value
-  if (JSON.stringify(songInfo.value) !== '{}') {
-    avatarUrl.value = songInfo.value.al.picUrl
-  }
 })
 
 // 播放
@@ -227,6 +289,7 @@ const handleNext = () => {
 }
 
 const init = () => {
+  songInfo.value = playerStore.songInfo
   url.value = playerStore.songUrl
   window.addEventListener('mouseup', handleMouseup)
   window.addEventListener('mousemove', handleMousemove)
@@ -271,8 +334,17 @@ const handleMouseup = () => {
   isDrag.value = false
 }
 
-const avatarUrl = ref()
-const { isLoading } = useImage({ src: avatarUrl })
+const isHoverWords = ref(false)
+// 跳转歌词页面
+const open = ref(false)
+const handleWords = () => {
+  open.value = !open.value
+  wordsStore.changeOpen()
+}
+
+wordsStore.$subscribe((mutatin, state) => {
+  open.value = state.open
+})
 </script>
 
 <style scoped lang="less">
@@ -281,13 +353,14 @@ const { isLoading } = useImage({ src: avatarUrl })
   width: 100%;
   position: fixed;
   bottom: 0;
-  z-index: 10;
+  z-index: 100;
   padding: 10px 20px;
   background: var(--background-secondary) !important;
   box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.5);
 
   #Control {
     justify-content: space-around;
+    height: 34px !important;
 
     div {
       width: 34px;
@@ -312,7 +385,7 @@ const { isLoading } = useImage({ src: avatarUrl })
 
 #Progress {
   width: 100%;
-  height: 2px;
+  height: 20px;
   position: relative;
   border-radius: 1px;
   display: flex;
@@ -370,6 +443,19 @@ const { isLoading } = useImage({ src: avatarUrl })
   }
 }
 
+#Show {
+  transition: 0.3s;
+  height: 120px;
+
+  .item {
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+  }
+  .item:hover {
+    background-color: rgba(223, 230, 233, 0.3);
+  }
+}
+
 #MusicList {
   display: flex;
   justify-content: center;
@@ -384,5 +470,35 @@ const { isLoading } = useImage({ src: avatarUrl })
 .player-enter-from,
 .player-leave-to {
   transform: translateY(80px);
+}
+
+.words-enter-active,
+.words-leave-active {
+  transition: 0.3s;
+}
+
+.words-enter-from,
+.words-leave-to {
+  transform: translateY(60px);
+}
+
+.show-enter-active,
+.show-leave-active {
+  transition: 0.3s;
+}
+
+.show-enter-from,
+.show-leave-to {
+  transform: translateY(60px);
+}
+
+.hidden-enter-active,
+.hidden-leave-active {
+  transition: 0.3s;
+}
+
+.hidden-enter-from,
+.hidden-leave-to {
+  transform: translateY(-60px);
 }
 </style>

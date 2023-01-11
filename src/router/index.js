@@ -39,6 +39,11 @@ const routes = [
         path: 'collection',
         name: 'collection',
         component: () => import('@/viewRouter/PlayDetail/CollectionView.vue')
+      },
+      {
+        path: 'daycomm',
+        name: 'daycomm',
+        component: () => import('@/viewRouter/PlayDetail/DayCommView.vue')
       }
     ]
   },
@@ -51,6 +56,11 @@ const routes = [
     path: '/singerinfo',
     name: 'singerinfo',
     component: () => import('@/views/SignerView.vue')
+  },
+  {
+    path: '/mine',
+    name: 'mine',
+    component: () => import('@/views/MineView.vue')
   }
 ]
 

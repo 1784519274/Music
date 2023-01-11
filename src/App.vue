@@ -11,11 +11,12 @@
         : 'height: calc(100%)  !important'
     "
   >
-    <div id="App-Container" class="px-36">
+    <div id="App-Container" class="px-36 relative">
       <AppBg></AppBg>
       <Header></Header>
       <div class="">
-        <router-view></router-view>
+        <WordsView :open="open"></WordsView>
+        <router-view v-if="!open"></router-view>
       </div>
     </div>
     <div class="mt-auto">
@@ -35,6 +36,7 @@ import { useAppStroe } from '@/store/app'
 import useNavigatorStore from '@/store/navigator'
 import usePlayerStore from '@/store/player'
 import useScrollStore from '@/store/scroll'
+import { useWordsStore } from '@/store'
 import Header from './components/Header/HeaderCom.vue'
 import SplicLine from '@/components/SplicLine/LineCom.vue'
 import Footer from '@/components/Footer/FooterCom.vue'
@@ -42,6 +44,7 @@ import AppBg from '@/components/AppBg/AppBg.vue'
 import Player from '@/components/Player/PlayerCom.vue'
 import BackTopBall from '@/components/BackTopBall/BackTop.vue'
 import PlayList from '@/components/Player/PlayList.vue'
+import WordsView from '@/views/WordsView.vue'
 
 const el = ref()
 const { y } = useScroll(el)
@@ -68,7 +71,7 @@ const handelScroll = () => {
       navigatorStore.changeScrollTop()
     }
   }
-  // navigatorStore.changeScrollTop()
+
   navigatorStore.chageScrollState(true)
   clearTimeout(timer.value)
   timer.value = setTimeout(() => {
@@ -76,13 +79,14 @@ const handelScroll = () => {
   }, 500)
 
   playerStore.$subscribe((mutation, state) => {
-    if (state.playingId === 0) {
-      isPlay.value = false
-    } else {
-      isPlay.value = true
-    }
+    isPlay.value = state.isPlay
   })
 }
+const wordsStore = useWordsStore()
+const open = ref(false)
+wordsStore.$subscribe((mutation, state) => {
+  open.value = state.open
+})
 </script>
 
 <style lang="less">

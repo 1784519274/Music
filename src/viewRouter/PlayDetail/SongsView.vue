@@ -179,6 +179,6 @@ li {
 }
 
 .signer:hover {
-  color: rgba(178, 190, 195, 0.4);
+  color: var(--text-accent);
 }
 </style>

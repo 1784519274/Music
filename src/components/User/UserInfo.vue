@@ -68,6 +68,7 @@ const handleClick = () => {
 // https://img-blog.csdnimg.cn/20210313122054101.png
 const init = async () => {
   const res = await getAccountInfo()
+  console.log(res)
   const userDetail = await getUserDetail(res.account.id)
   store.changeUserDetail(userDetail)
   avatarUrl.value = userDetail.profile.avatarUrl

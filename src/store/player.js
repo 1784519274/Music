@@ -6,21 +6,32 @@ const usePlayerStore = defineStore({
   id: 'player',
   state: () => ({
     // 正在播放的音乐id
-    playingId: 0,
+    playingId:
+      JSON.parse(JSON.stringify(localStorage.getItem('player.playingId'))) ?? 0,
     // 正在播放音乐的url
-    songUrl: '',
+    songUrl:
+      JSON.parse(JSON.stringify(localStorage.getItem('player.songUrl'))) ?? '',
     // 正在播放的音乐信息
-    songInfo: {},
+    songInfo:
+      JSON.parse(JSON.stringify(localStorage.getItem('player.songInfo'))) ?? {},
     // 是否在播放
-    isPlay: true,
+    isPlay:
+      JSON.parse(JSON.stringify(localStorage.getItem('player.isPlay'))) ?? true,
     // 是否打开播放列表
-    openPlayList: false,
+    openPlayList:
+      JSON.parse(JSON.stringify(localStorage.getItem('player.openPlayList'))) ??
+      false,
     // 音乐id字符串，多个id
-    ids: '',
+    ids: JSON.parse(JSON.stringify(localStorage.getItem('player.ids'))) ?? '',
     // 播放列表
-    songList: [],
+    songList:
+      JSON.parse(JSON.stringify(localStorage.getItem('player.songList'))) ?? [],
     // 当前歌单id
-    songListId: ''
+    songListId:
+      JSON.parse(JSON.stringify(localStorage.getItem('player.songListId'))) ??
+      '',
+    currentPlayTime: JSON.parse(JSON.stringify(localStorage.getItem('player.currentPlayTime'))) ??
+      0
   }),
   actions: {
     changeSongList (list) {
@@ -54,6 +65,9 @@ const usePlayerStore = defineStore({
       }
       if (flag) return this.randomSong()
     },
+    changeCurrentPlayTime (time) {
+      this.currentPlayTime = time
+    },
     lastSong () {
       const idArr = this.ids.split(',')
       const oldIndex = idArr.indexOf(String(this.playingId))
@@ -85,7 +99,8 @@ const usePlayerStore = defineStore({
         this.songUrl = res.data[0].url
       })
     }
-  }
+  },
+  persist: true
 })
 
 export default usePlayerStore

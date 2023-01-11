@@ -26,7 +26,6 @@
               alt
             />
             <PlayMusic
-              class="absolute bottom-4 right-4"
               :isHover="isHover"
             ></PlayMusic>
           </div>

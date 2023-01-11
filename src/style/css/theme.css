@@ -96,7 +96,7 @@
   background: linear-gradient(130deg, #24c6dc, #5433ff 41.07%, #ff0099 76.05%);
 }
 .shadow-them {
-  box-shadow: 0px 0px 10px var(--shadow-theme);
+  box-shadow: 0px 2px 5px #000000;
 }
 .ob-text-bright {
   color: var(--text-bright);

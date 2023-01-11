@@ -54,7 +54,9 @@ export const formatSecToStr = (seconds) => {
 export const formatMusicPlay = (seconds) => {
   const minute = Math.floor(seconds / 60)
   const second = Math.floor(seconds - minute * 60)
-  return `${minute < 10 ? `0${minute}` : minute}:${second < 10 ? `0${second}` : second}`
+  return `${minute < 10 ? `0${minute}` : minute}:${
+    second < 10 ? `0${second}` : second
+  }`
 }
 
 // 整理播放列表id
@@ -67,4 +69,70 @@ export const formatPlayListId = (array) => {
     }
   })
   return idStr
+}
+
+// 处理歌词
+export const formatLyric = (lyricStr) => {
+  const newArray = []
+  const allArray = lyricStr.split('\n')
+  try {
+    allArray.forEach((item) => {
+      if (item !== '') {
+        const regexpRes = item.match(/\[(\S*)\]/)
+        if (!regexpRes) {
+          throw new Error('暂无歌词')
+        }
+        const key = handleLyricTime(regexpRes[1])
+        const value = item.replace(regexpRes[0], '')
+        newArray.push({
+          key,
+          value
+        })
+      }
+    })
+  } catch {
+    newArray.push({
+      key: 0,
+      value: '歌词无时间关键词'
+    })
+  }
+  return newArray
+}
+
+function handleLyricTime (timeStr) {
+  const everyTime = timeStr.split(/[:.]/)
+  if (everyTime.length < 3) {
+    console.log('歌词时间格式不对')
+    return
+  }
+  const secondNum =
+    Number(everyTime[0]) * 60 +
+    Number(everyTime[1]) +
+    Number(everyTime[2] / 1000)
+  return secondNum
+}
+
+export const getLyricIndex = (array, time) => {
+  let index = 0
+  for (const item of array) {
+    if (time >= Number(item.key)) {
+      index++
+    } else {
+      break
+    }
+  }
+  return index
+}
+
+// 计算歌词应该滚动总高度
+export const computedScrollTop = (array, index) => {
+  let flag = 0
+  let top = 0
+  for (const item of array) {
+    top += item.offsetHeight
+    if (++flag >= index) {
+      break
+    }
+  }
+  return top
 }

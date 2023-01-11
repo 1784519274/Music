@@ -1,6 +1,6 @@
 <template>
   <Transition name="fade">
-    <div v-if="isHover" class="w-12 h-12 rounded-full bg-gray-50 bg-opacity-50">
+    <div v-if="props.isHover" class="w-12 h-12 rounded-full bg-gray-50 bg-opacity-50 absolute bottom-4 right-4" @click.stop="handleClick">
       <svg
         t="1672278313649"
         class="icon w-6 h-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
@@ -46,18 +46,21 @@
   </Transition>
 </template>
 
-<script>
-import { defineComponent } from 'vue'
+<script setup>
+import { defineProps, defineEmits } from 'vue'
 
-export default defineComponent({
-  props: {
-    isHover: {
-      type: Boolean,
-      default: false
-    }
-  },
-  setup () {}
+const props = defineProps({
+  isHover: {
+    type: Boolean,
+    default: false
+  }
 })
+
+const emit = defineEmits(['handlePlayMusic'])
+
+const handleClick = () => {
+  emit('handlePlayMusic')
+}
 </script>
 
 <style scoped lang="less">
