@@ -58,6 +58,7 @@
         v-for="(item, index) in comments"
         :key="index"
       >
+        <!-- 头像 -->
         <div
           class="flex justify-center pt-1"
           style="min-width: 60px; height: 60px"
@@ -69,6 +70,7 @@
             class="rounded-full"
           />
         </div>
+        <!-- 评论 -->
         <div class="w-full">
           <div>
             <span class="nickname" @click="handleUser(item.user.userId)"

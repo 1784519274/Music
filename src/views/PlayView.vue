@@ -68,8 +68,6 @@ import Tab from '@/components/Tab/TabCom.vue'
 import RecommendSong from '@/components/Recommend/RecommendSong.vue'
 import Paginator from '@/components/Paginator/PaginatorCom.vue'
 
-// import { getPlaylist } from '@/api'
-
 const store = usePlayList()
 const total = computed(() => store.total)
 const playlists = computed(() => store.playlists)

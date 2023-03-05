@@ -99,6 +99,10 @@ export default defineComponent({
     const polling = async (key) => {
       if (router.currentRoute._rawValue.fullPath !== '/login') return
       const res = await getLoginCheck(key)
+      getLoginCheck(key).then((res) => {
+        console.log(res)
+      })
+      console.log(res, 'res')
       if (res.code === 800) {
         // 二维码失效
         qrcodeStatus.value = 800

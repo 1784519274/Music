@@ -63,7 +63,7 @@
                 alt
                 class="rounded-xl"
               />
-              <Transition name="words">
+              <!-- <Transition name="words"> -->
                 <div
                   v-if="isHoverWords"
                   id="Words"
@@ -73,7 +73,7 @@
                 >
                   <Up></Up>
                 </div>
-              </Transition>
+              <!-- </Transition> -->
             </div>
             <div class="flex flex-col justify-between" style="overflow: hidden">
               <span

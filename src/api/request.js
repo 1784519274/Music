@@ -13,7 +13,8 @@ request.interceptors.response.use(
     if (res.data.code === 200) {
       return res.data
     } else {
-      return console.log('请求失败')
+      console.log('请求异常，返回code不是200')
+      return res.data
     }
   },
   () => {

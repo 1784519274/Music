@@ -82,7 +82,7 @@ import { useRouter } from 'vue-router'
 import { getPlaylistSongsAll, getSongUrl } from '@/api'
 import { formatSecToStr } from '@/util'
 import usePlayerStore from '@/store/player'
-import useScrollStore from '@/store/scroll'
+// import useScrollStore from '@/store/scroll'
 import Lable from '@/components/SmallLable/LableCom.vue'
 import VolumeNotice from '@/components/Svg/VolumeNotice.jsx'
 import VolumeSmall from '@/components/Svg/VolumeSmall.jsx'
@@ -90,7 +90,7 @@ import Like from '@/components/Svg/LikeSvg.jsx'
 import Download from '@/components/Svg/DownloadSvg.jsx'
 
 const playerStore = usePlayerStore()
-const scrollStore = useScrollStore()
+// const scrollStore = useScrollStore()
 const { currentRoute } = useRouter()
 const router = useRouter()
 const songList = ref([])
@@ -128,7 +128,6 @@ playerStore.$subscribe((mutation, state) => {
 })
 
 const el = ref()
-scrollStore.$subscribe((mutation, state) => {})
 
 const handleSinger = (id) => {
   console.log(id)

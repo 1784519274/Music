@@ -7,7 +7,7 @@
     <div
       v-show="!isTop"
       id="BackTop"
-      class="flex justify-center items-center shadow-them cursor-pointer"
+      class="flex justify-center items-center shadow-them cursor-pointer z-50"
       @click="handleBackTop"
     >
       <Rocket></Rocket>
